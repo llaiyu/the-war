@@ -1,76 +1,68 @@
 import React from "react";
-import _ from "lodash";
-import RGL, { WidthProvider } from "react-grid-layout";
 import Square from './soldier';
 import './index.css';
-const ReactGridLayout = WidthProvider(RGL);
 
 export default class WarBoard extends React.PureComponent  {
-
-    static defaultProps = {
-        className: "layout",
-        isDraggable: true,
-        isResizable: true,
-        items: 100,
-        rowHeight: 20,
-        onLayoutChange: function() {},
-        cols: 10
-    };
   
     constructor(props) {
       super(props);
-      const layout = this.generateLayout();
-    //   const layout = [{i: 'a', x: 0, y: 0, w: 1, h: 2, static: true},
-    //   {i: 'b', x: 1, y: 0, w: 3, h: 2, minW: 2, maxW: 4},
-    //   {i: 'c', x: 4, y: 0, w: 1, h: 2}];
 
-      this.state = { layout };
-    }
-    
-    moveSquare(x,y) {
-  
-    }
+      let lengthList = Array(100).fill(0);
+      const table = lengthList.map((num ,index) => <Square i={index}/>)
+     
 
-    onLayoutChange(layout) {
-      this.props.onLayoutChange(layout);
-    }
-
-    generateDOM() {
-        return _.map(_.range(100), function(i) {
-          return (
-            <div key={i}>
-                <Square></Square>
-            </div>        
-          );
-        });
+      this.state ={
+          table:table
       }
-  
-    generateLayout() {
-      const p = this.props;
-      //console.log(p.items);
-      console.log(_.map(new Array(100), function(item, i) {
-        //const y = _.result(p, "y") || Math.ceil(Math.random() * 4) + 1;
-        //console.log(i);
-        //const y = _.result(p, "y") || Math.ceil(Math.random() * 4) + 1;
-        return {
-            x: parseInt(i / 10),
-            y: i % 10,
-            w: 1,
-            h: 1,
-            i: i.toString()
-            };
-        }));
-      return _.map(new Array(100), function(item, i) {
-        //const y = _.result(p, "y") || Math.ceil(Math.random() * 4) + 1;
-        //console.log(i);
-        //const y = _.result(p, "y") || Math.ceil(Math.random() * 4) + 1;
-        return {
-            x: parseInt(i / 10),
-            y: i % 10,
-            w: 1,
-            h: 1,
-            i: i.toString()
-            };
+    }
+
+    componentDidMount(){
+        this.props.onRef(this)
+    }
+   
+    layout(partyABuy, partyBBuy) {
+        let map = new Map();
+        for (let i = 0; i < partyABuy.b;i++) {
+            map.set(i, 'svg/bubing.svg');
+        }
+
+        for (let i = 0; i < partyABuy.g;i++) {
+            map.set(i + 10, 'svg/gongjianbing.svg');
+        }
+
+        for (let i = 0; i < partyABuy.q;i++) {
+            map.set(i + 20, 'svg/qibing.svg');
+        }
+
+        for (let i = 0; i < partyBBuy.b;i++) {
+            map.set(i + 90, 'svg/bubing.svg');
+        }
+
+        for (let i = 0; i < partyBBuy.g;i++) {
+            map.set(i + 80, 'svg/gongjianbing.svg');
+        }
+
+        for (let i = 0; i < partyBBuy.q;i++) {
+            map.set(i + 70, 'svg/qibing.svg');
+        }
+
+
+        console.log(map);
+
+        let lengthList = Array(100).fill(0);
+        const table = lengthList.map(function(num ,index) {
+            
+            if (!map.has(index)) {
+                return <Square />;
+            } else {
+                console.log(map.get(index));
+                return <Square svgSrc={map.get(index)}/>;
+            }          
+        })
+
+
+        this.setState({
+            table:table
         });
     }
   
@@ -79,18 +71,16 @@ export default class WarBoard extends React.PureComponent  {
     // }
   
     render() {
-      // let lengthList = Array(10).fill(0);
-      // const row = lengthList.map((num) => <Square />);
-      // const table = lengthList.map((num) => <div className="board-row">{row}</div>);
-      // return ( 
-      //   <div>
-      //     {table}
-      //   </div>) ;
-      // const {items, ...props} = this.props;
-      return (
-        <ReactGridLayout layout={this.state.layout} onLayoutChange={this.onLayoutChange} {...this.props}>
-          {this.generateDOM()}
-        </ReactGridLayout>
-      );
+      return ( 
+        <div>
+          {this.state.table}
+        </div>) ;
+
     }
+  }
+
+  class Row extends React.Component {
+      render() {
+          return <div className="board-row" >{this.props.data}</div>;         
+      }
   }

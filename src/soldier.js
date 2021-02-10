@@ -1,10 +1,35 @@
 import React from "react";
+import { ReactSVG } from 'react-svg'
 import './index.css';
 export default class Square extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            arms:null,
+            isSelected:false,
+        }
+    }
+
+    handleClick(){
+
+    }
+
+    seletSquare() {
+        if (this.state.isSelected === false) {
+            this.setState({
+                arms:this.state.arms,
+                isSelected:true,
+            })
+            //TODO 
+        }
+    }
+
+
     render() {
+      //console.log("Square key " + this.props.i)
       return (
-        <button className="square">
-          {1}
+        <button className="square"  onClick={this.handleClick()}>
+          <ReactSVG src={this.props.svgSrc}/>
         </button>
       );
     }

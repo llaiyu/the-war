@@ -3,6 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 // import Modal from 'react-modal';
 // import GridLayout from 'react-grid-layout';
+import Editor from "@monaco-editor/react";
 import WarBoard from './board.js';
 import './index.css';
 
@@ -29,13 +30,23 @@ class App extends React.Component {
       partyABuy:this.state.partyABuy,
     });
   }
+  handlePlayClick() {
+    //console.log(this.child);
+    this.child.layout(this.state.partyABuy,this.state.partyBBuy);
+  }
+
+  onRef = (ref) => {
+    this.child = ref
+  }
+
 
   render() {
     return (
       <div>
         <Settings partyABuy={this.state.partyABuy} partyBBuy={this.state.partyBBuy} setPartyABuy={(a) => this.setPartyABuy(a)}  setPartyBBuy={(b) => this.setPartyBBuy(b)} />
-        <Play />
-        <WarBoard items="10"/>       
+        <Play handleClick={() => this.handlePlayClick()} />
+        <WarBoard items="10" onRef={this.onRef} /> 
+        <Editor height="90vh" defaultLanguage="javascript" defaultValue="// some comment" />
       </div>
     );
   };
@@ -68,7 +79,7 @@ class Settings extends React.Component {
   }
 
   onChange(e) {
-    console.log(e.target.value);
+    //console.log(e.target.value);
     switch(e.target.name) {
       case "A-B":
         if ((this.cons.partyAMoney - this.props.partyABuy.g * this.cons.gMoney
@@ -89,6 +100,7 @@ class Settings extends React.Component {
       case "A-Q":
         if ((this.cons.partyAMoney - this.props.partyABuy.b * this.cons.bMoney
           - this.props.partyABuy.g * this.cons.gMoney - this.cons.qMoney * e.target.value) >= 0) {
+            
           this.setPartyABuy({b:this.props.partyABuy.b, g:this.props.partyABuy.g, q:e.target.value});
           break;
         } else {
@@ -143,14 +155,18 @@ class Settings extends React.Component {
 
 class Play extends React.Component {
 
+  constructor(props) {
+    super(props);
+    this.handleClick = this.handleClick.bind(this);
+  }
+
   handleClick() {
-    // 获取数量，启动
-    // DialogCustom.show({ onOk: this.handleOk });
+    this.props.handleClick();
   }
 
   render() {
     return(
-      <button className="playbutton" onClick="handleClick">Play</button>
+      <button className="playbutton" onClick={this.handleClick}>Play</button>
     );
   };
 }
